@@ -27,11 +27,24 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    panoimage.draw(0,0,512,256);
+    
+    
+//    mesh.setMode(OF_PRIMITIVE_POINTS);
+//
+//    
+//
+ //  pointcloud.setMode(OF_PRIMITIVE_TRIANGLES);
+//
+   pointcloud.setMode(OF_PRIMITIVE_LINE_STRIP);
+    
+     glPointSize(4);
+
+   //panoimage.draw(0,0,512,256);
     depthmapimage.draw(0,256, 512, 256);
     
     cam.begin();
-    pointcloud.drawVertices();
+    //pointcloud.drawVertices();
+      pointcloud.draw();
     cam.end();
 }
 
@@ -259,4 +272,28 @@ void ofApp::constructPointCloud() {
             pointcloud.addColor(ofColor(r, g, b, 255));
         }
     }
+    
+    
+    /// triangulate mesh //new db dec 17 2017
+    int step =1;
+     ofVec3f v3;
+    int meshW =  width/step ;
+    int meshH = height/step;
+    for (int y = 0; y<height-step; y+= step){
+        for (int x=0; x<width-step; x+= step){
+            v3.set(0,0,0);
+            //  if ((mesh.getVertex(x+y*meshW))==v3 or (mesh.getVertex((x+1)+y*(meshW)))==v3 or (mesh.getVertex(x+(y+1)*meshW)==v3)){
+            //   } else {
+            pointcloud.addIndex(x+y*meshW);               // 0
+            pointcloud.addIndex((x+1)+y*meshW);           // 1
+            pointcloud.addIndex(x+(y+1)*meshW);           // 10
+            //}
+            pointcloud.addIndex((x+1)+y*meshW);           // 1
+            pointcloud.addIndex((x+1)+(y+1)*meshW);       // 11
+            pointcloud.addIndex(x+(y+1)*meshW);           // 10
+        }
+    }
+
 }
+
+
